@@ -5,6 +5,7 @@
 package riff_test
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -38,6 +39,20 @@ func ExampleReader() {
 	// .	LIST(UGLY)
 	// .	.	FOUR "ghij"
 	// .	.	SIX  "pqrstu"
+}
+
+func ExampleWriter() {
+	w := riff.NewWriter(riff.FourCC{'G', 'O', ' ', ' '})
+
+	l := riff.NewList(riff.FourCC{'L', 'A', 'N', 'G'})
+	l.AppendChunk(riff.FourCC{'e', 'x', 'a', 'm'}, []byte{1, 2, 3, 4, 5, 6, 7})
+	l.AppendChunk(riff.FourCC{'p', 'l', 'e'}, []byte{8, 9, 10, 11})
+
+	w.AppendList(l)
+	w.AppendChunk(riff.FourCC{'c', 'h', 'n', 'k'}, []byte{12, 13, 14, 15})
+
+	var buf bytes.Buffer
+	w.WriteTo(&buf)
 }
 
 func dump(r *riff.Reader, indent string) error {
